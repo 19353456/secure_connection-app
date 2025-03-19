@@ -1,0 +1,24 @@
+[0;1;31m●[0m mariadb.service - MariaDB 10.9.8 database server
+     Loaded: loaded (/lib/systemd/system/mariadb.service; enabled; vendor preset: enabled)
+    Drop-In: /etc/systemd/system/mariadb.service.d
+             └─migrated-from-my.cnf-settings.conf
+     Active: [0;1;31mfailed[0m (Result: exit-code) since Mon 2025-03-17 23:52:48 GMT; 1min 37s ago
+       Docs: man:mariadbd(8)
+             https://mariadb.com/kb/en/library/systemd/
+    Process: 51825 ExecStartPre=/usr/bin/install -m 755 -o mysql -g root -d /var/run/mysqld (code=exited, status=0/SUCCESS)
+    Process: 51839 ExecStartPre=/bin/sh -c systemctl unset-environment _WSREP_START_POSITION (code=exited, status=0/SUCCESS)
+    Process: 51841 ExecStartPre=/bin/sh -c [ ! -e /usr/bin/galera_recovery ] && VAR= ||   VAR=`cd /usr/bin/..; /usr/bin/galera_recovery`; [ $? -eq 0 ]   && systemctl set-environment _WSREP_START_POSITION=$VAR || exit 1 (code=exited, status=0/SUCCESS)
+    Process: 51867 ExecStart=/usr/sbin/mariadbd $MYSQLD_OPTS $_WSREP_NEW_CLUSTER $_WSREP_START_POSITION [0;1;31m(code=exited, status=1/FAILURE)[0m
+   Main PID: 51867 (code=exited, status=1/FAILURE)
+     Status: "MariaDB server is down"
+
+Mar 17 23:52:48 malware-vm mariadbd[51867]: 2025-03-17 23:52:48 0 [ERROR] InnoDB: Plugin initialization aborted with error Generic error
+Mar 17 23:52:48 malware-vm mariadbd[51867]: 2025-03-17 23:52:48 0 [Note] InnoDB: Starting shutdown...
+Mar 17 23:52:48 malware-vm mariadbd[51867]: 2025-03-17 23:52:48 0 [ERROR] Plugin 'InnoDB' registration as a STORAGE ENGINE failed.
+Mar 17 23:52:48 malware-vm mariadbd[51867]: 2025-03-17 23:52:48 0 [Note] Plugin 'FEEDBACK' is disabled.
+Mar 17 23:52:48 malware-vm mariadbd[51867]: 2025-03-17 23:52:48 0 [ERROR] Could not open mysql.plugin table: "Unknown storage engine 'Aria'". Some plugins may be not loaded
+Mar 17 23:52:48 malware-vm mariadbd[51867]: 2025-03-17 23:52:48 0 [ERROR] Failed to initialize plugins.
+Mar 17 23:52:48 malware-vm mariadbd[51867]: 2025-03-17 23:52:48 0 [ERROR] Aborting
+Mar 17 23:52:48 malware-vm systemd[1]: [0;1;39m[0;1;31m[0;1;39mmariadb.service: Main process exited, code=exited, status=1/FAILURE[0m
+Mar 17 23:52:48 malware-vm systemd[1]: [0;1;38;5;185m[0;1;39m[0;1;38;5;185mmariadb.service: Failed with result 'exit-code'.[0m
+Mar 17 23:52:48 malware-vm systemd[1]: [0;1;31m[0;1;39m[0;1;31mFailed to start MariaDB 10.9.8 database server.[0m
