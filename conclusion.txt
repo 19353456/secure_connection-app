@@ -3,19 +3,11 @@
 - Flaws Identified:
     1. **Hardcoded Passwords**: Passwords such as 'cli123' and 'pro456' were hardcoded in the application, making them vulnerable to brute-force attacks.
     2. **Buffer Overflow Risk**: The program doesn’t validate the input length correctly, potentially leading to buffer overflows.
-    3. **Password Storage**: Passwords are stored in plain text, exposing them to attackers if they gain access to the data storage.
-    4. **Insecure Input Handling**: The program doesn’t sanitize user input properly, leaving it open to injection attacks.
-
 
 2. Discuss Implications of Unfixed Flaws:
 - **Hardcoded Passwords**: Attackers can easily guess these passwords, potentially gaining unauthorized access to the system. In a real-world scenario, this could lead to data breaches or unauthorized privilege escalation.
 
 - **Buffer Overflow Risk**: If input data exceeds the allocated space, it could overwrite important data, potentially allowing attackers to execute arbitrary code. This flaw could be exploited for remote code execution.
-
-- **Password Storage**: Storing passwords in plain text is extremely insecure. If attackers gain access to the server or database, they will have access to all user passwords, which could be used in further attacks.
-
-- **Insecure Input Handling**: Without proper input sanitization, the system is vulnerable to injection attacks such as SQL injection, command injection, or cross-site scripting (XSS). An attacker could manipulate input to execute malicious commands or alter database queries.
-
 
 
 3. Estimate Resources Required to Fix Them:
@@ -28,16 +20,6 @@
     - **Time**: 3-4 hours
     - **Resources**: Refactor code to ensure input lengths are properly checked. Implement bounds checking and consider using safer functions like `fgets` instead of `gets`.
     - **Tools**: Debugging tools, code analysis tools (e.g., Splint), and testing with edge cases.
-
-- **Fixing Plain Text Password Storage**:
-    - **Time**: 2-3 hours
-    - **Resources**: Implement secure password storage using a hashing algorithm (e.g., bcrypt, Argon2).
-    - **Tools**: Cryptographic libraries.
-
-- **Fixing Insecure Input Handling**:
-    - **Time**: 2-3 hours
-    - **Resources**: Refactor code to sanitize inputs properly, use parameterized queries (for SQL), and check inputs before passing them to critical functions.
-    - **Tools**: Input sanitization libraries, static analysis tools.
 
 
 
