@@ -1,0 +1,111 @@
+#include <iostream>
+#include <mysql/mysql.h>
+#include <cstdlib>
+#include <cstring>
+
+using namespace std;
+
+// Function to safely extract GET parameter values
+string get_query_param(const string &param) {
+    const char *query_string = getenv("QUERY_STRING");
+    if (query_string) {
+        string query(query_string);
+        size_t param_pos = query.find(param + "=");
+        if (param_pos != string::npos) {
+            size_t start = param_pos + param.length() + 1; // Skip "param="
+            size_t end = query.find("&", start); // Find next "&" or end of string
+            if (end == string::npos) {
+                return query.substr(start);
+            }
+            return query.substr(start, end - start);
+        }
+    }
+    return ""; // Return an empty string if parameter is not found
+}
+
+int main() {
+    cout << "Content-type: text/html\n\n";
+    cout << "<html><head><style>"
+         << "body { font-family: Arial, sans-serif; }"
+         << "ul { list-style-type: none; padding: 0; }"
+         << "li { margin: 5px; padding: 5px; background-color: #f4f4f4; border: 1px solid #ddd; }"
+         << "</style></head><body>";
+
+    cout << "<h2>Providers List</h2><ul>";
+
+    // Initialize MySQL connection
+    MYSQL *conn;
+    MYSQL_RES *res;
+    MYSQL_ROW row;
+
+    conn = mysql_init(NULL);
+    if (conn == NULL) {
+        cout << "<p>Error initializing database connection.</p>";
+        return 1;
+    }
+
+    if (mysql_real_connect(conn, "127.0.0.1", "root", "mannan22", "secure_connection_db", 0, NULL, 0)) {
+        // ✅ Fetch all providers from the users table
+        const char* query = "SELECT username FROM users WHERE role = 'provider';";
+        if (mysql_query(conn, query) == 0) {
+            res = mysql_store_result(conn);
+            while ((row = mysql_fetch_row(res))) {
+                cout << "<li>No providers found.</li>";
+            } else {
+                while ((row = mysql_fetch_row(res))) {
+                    cout << "<li><b>Provider:</b> " << row[0] << "</li>";
+                }
+    }
+
+
+    // ✅ Fetch requests for a provider (if provider_id is given in URL)
+    cout << "<h2>Requests Assigned to You</h2><ul>";
+    string provider_id = get_query_param("provider_id");
+
+    if (!provider_id.empty() && provider_id.find_first_not_of("0123456789") == string::npos) {
+        string request_query = "SELECT request_id, client_id, status FROM requests WHERE provider_id = '" + provider_id + "';";
+
+        if (mysql_query(conn, request_query.c_str()) == 0) {
+            res = mysql_store_result(conn);
+            if (mysql_num_rows(res) == 0) {
+                cout << "<li>No requests found for provider ID: " << provider_id << "</li>";
+            } else {
+                while ((row = mysql_fetch_row(res))) {
+                    cout << "<li><b>Request ID:</b> " << row[0] 
+                         << " - <b>Client ID:</b> " << row[1] 
+                         << " - <b>Status:</b> " << row[2] << "</li>";
+                }
+            }
+            mysql_free_result(res);
+        } else {
+            cout << "<p>Error fetching requests: " << mysql_error(conn) << "</p>";
+        }
+    } else {
+        cout << "<p>No valid provider ID provided. Please add '?provider_id=1' to the URL.</p>";
+    }
+    cout << "</ul>";
+
+    mysql_close(conn);
+
+    // ✅ User creation form
+    cout << "<h2>Create New User</h2>";
+    cout << "<form method='POST' action='/cgi-bin/create_user.cgi'>";
+    cout << "<label for='username'>Username: </label>";
+    cout << "<input type='text' id='username' name='username' required><br><br>";
+
+    cout << "<label for='password'>Password: </label>";
+    cout << "<input type='password' id='password' name='password' required><br><br>";
+
+    cout << "<label for='role'>Role: </label>";
+    cout << "<select id='role' name='role'>";
+    cout << "<option value='client'>Client</option>";
+    cout << "<option value='provider'>Provider</option>";
+    cout << "<option value='admin'>Admin</option>";
+    cout << "</select><br><br>";
+
+    cout << "<input type='submit' value='Create User'>";
+    cout << "</form>";
+
+    cout << "</body></html>";
+    return 0;
+}

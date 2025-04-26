@@ -1,0 +1,3 @@
+client1,$2b$12$N0NeoJQr42BSJ6Va68UX7OBRu3g6eKOrfxDrn.edF1pu2H46oAQ8S
+Client1
+Client2
